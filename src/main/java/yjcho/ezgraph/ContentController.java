@@ -1,10 +1,12 @@
 package yjcho.ezgraph;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import yjcho.ezgraph.app.content.ContentService;
+import yjcho.ezgraph.security.AuthService;
 import yjcho.ezgraph.system.Result;
 
 @RestController
@@ -12,9 +14,10 @@ import yjcho.ezgraph.system.Result;
 public class ContentController {
 
     private final ContentService contentService;
+    private final AuthService authService;
 
     @GetMapping("/graphs")
-    public Result getAllUserGraphs() {
+    public Result getAllUserGraphs(HttpServletRequest request) {
         return new Result(true, HttpStatus.OK.value(), "", "graphs");
     }
 

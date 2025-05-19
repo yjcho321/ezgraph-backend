@@ -53,18 +53,28 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/users/login")
+                .authorizeHttpRequests(req -> req.anyRequest().authenticated())
+                .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(this.customBasicAuthenticationEntryPoint))
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .build();
+    }
+
+    @Bean
+    public SecurityFilterChain jwtAuthFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/graphs/**").hasAuthority("ROLE_user")
                         .requestMatchers("/templates/**").hasAuthority("ROLE_user")
-                        .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/shared/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/shared").permitAll()
                         .requestMatchers(HttpMethod.GET, "/admin/**").hasAuthority("ROLE_admin")
                         .anyRequest().authenticated()
                 )
-                        .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(this.customBasicAuthenticationEntryPoint))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(this.customBearerTokenAuthenticationEntryPoint)
                         .accessDeniedHandler(this.customBearerTokenAccessDeniedHandler))
@@ -101,5 +111,4 @@ public class SecurityConfiguration {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-
 }

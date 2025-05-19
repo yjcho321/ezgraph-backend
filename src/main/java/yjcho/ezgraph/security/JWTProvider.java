@@ -3,9 +3,8 @@ package yjcho.ezgraph.security;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -17,6 +16,14 @@ import java.util.stream.Collectors;
 public class JWTProvider {
 
     private JwtEncoder jwtEncoder;
+    private JwtDecoder jwtDecoder;
+
+    public String getTokenType(String token) {
+        Jwt jwt = jwtDecoder.decode(token);
+        if(!jwt.hasClaim("type"))
+            throw new InvalidBearerTokenException("Missing claim \"type\"");
+        return jwt.getClaim("type");
+    }
 
     public String createToken(Authentication auth) {
         Instant now = Instant.now();
@@ -32,6 +39,7 @@ public class JWTProvider {
                 .expiresAt(now.plus(expiresIn, ChronoUnit.HOURS))
                 .subject(auth.getName())
                 .claim("authorities", authorities)
+                .claim("type", "access")
                 .build();
 
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
