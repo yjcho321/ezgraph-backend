@@ -12,19 +12,19 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 @AllArgsConstructor
-public class UserService implements UserDetailsService {
+public class AppUserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
 
     public AppUser save(AppUser newAppUser) {
         newAppUser.setPassword(passwordEncoder.encode(newAppUser.getPassword()));
-        return userRepository.save(newAppUser);
+        return appUserRepository.save(newAppUser);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
+        return appUserRepository.findByUsername(username)
                 .map(AppUserPrincipal::new)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " is not found"));
     }

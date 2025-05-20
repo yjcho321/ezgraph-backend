@@ -8,6 +8,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -53,6 +54,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    @Order(1)
     public SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/users/login")
@@ -65,6 +67,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    @Order(2)
     public SecurityFilterChain jwtAuthFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(req -> req
@@ -75,9 +78,10 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/admin/**").hasAuthority("ROLE_admin")
                         .anyRequest().authenticated()
                 )
+
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
-                        .authenticationEntryPoint(this.customBearerTokenAuthenticationEntryPoint)
-                        .accessDeniedHandler(this.customBearerTokenAccessDeniedHandler))
+                        .authenticationEntryPoint(this.customBearerTokenAuthenticationEntryPoint) // handles when fail to authenticate
+                        .accessDeniedHandler(this.customBearerTokenAccessDeniedHandler)) // // handles when fail to authorize
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())

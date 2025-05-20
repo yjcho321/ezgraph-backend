@@ -1,0 +1,48 @@
+User's POV
+- user
+ 	- read template list
+	- read graph list
+	- read template
+	- read graph
+	- create templates
+	- create graphs
+	- update templates
+	- update graphs
+- common
+	- quick access url (share key)
+	- share templates
+	- share graphs
+- create user
+
+API end points
+	- /auth
+		- /auth/login [POST]
+		- /auth/guest
+		- /auth/refresh [GET]
+	- /g/* [GET]
+	- /graphs [GET, POST]
+	- /graphs/* [GET, POST]
+	
+
+DB
+user
+	- id (PK)
+	- username
+	- password
+	- registeredAt
+	- lastLoginAt (BasicAuth)
+	- lastAccessAt (JWT)
+	- lastPasswordChangeAt
+	- refreshToken
+	- data_id (FK 1-many)
+
+data
+	- id (PK)
+	- sharekey
+	- type ("graph", "template")
+	- password (nullable)
+	- createdAt
+	- lastUpdatedAt
+	- validuntil (null if user)
+	- owner (null if guest)
+	- data

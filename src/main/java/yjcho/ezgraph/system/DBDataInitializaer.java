@@ -7,7 +7,7 @@ import yjcho.ezgraph.app.content.*;
 import yjcho.ezgraph.app.dataset.DataSet;
 import yjcho.ezgraph.app.dataset.DataSetRepository;
 import yjcho.ezgraph.app.user.AppUser;
-import yjcho.ezgraph.app.user.UserService;
+import yjcho.ezgraph.app.user.AppUserService;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +20,7 @@ public class DBDataInitializaer implements CommandLineRunner {
     private final UserContentRepository userContentRepository;
     private final GuestContentRepository guestContentRepository;
 
-    private final UserService userService;
+    private final AppUserService appUserService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -32,8 +32,8 @@ public class DBDataInitializaer implements CommandLineRunner {
         u2.setUsername("user2");
         u2.setPassword("pwd2");
         u2.setDateCreated(LocalDateTime.now());
-        u1 = userService.save(u1);
-        u2 = userService.save(u2);
+        u1 = appUserService.save(u1);
+        u2 = appUserService.save(u2);
 
         DataSet ds1 = new DataSet();
         ds1.setDataSet("data1");
