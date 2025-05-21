@@ -39,6 +39,7 @@ public class DBDataInitializaer implements CommandLineRunner {
         ds1.setDataSet("data1");
         DataSet ds2 = new DataSet();
         ds2.setDataSet("data1");
+        System.out.println(ds2.getId());
         dataSetRepository.save(ds1);
         dataSetRepository.save(ds2);
 

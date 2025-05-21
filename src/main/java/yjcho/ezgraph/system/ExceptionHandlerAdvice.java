@@ -4,6 +4,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -39,10 +40,10 @@ public class ExceptionHandlerAdvice {
         return new Result(false, HttpStatus.UNAUTHORIZED.value(), "Invalid Access Token", null);
     }
 
-    @ExceptionHandler(InsufficientAuthenticationException.class)
+    @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Result handleInsufficientAuthenticationException(InsufficientAuthenticationException e) {
-        return new Result(false, HttpStatus.UNAUTHORIZED.value(), "Authentication Required", null);
+    public Result handleInsufficientAuthenticationException(AuthenticationException e) {
+        return new Result(false, HttpStatus.UNAUTHORIZED.value(), "Authentication Required - " + e.getMessage(), null);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

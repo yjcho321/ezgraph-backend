@@ -1,28 +1,34 @@
 User's POV
 - user
- 	- read template list
-	- read graph list
-	- read template
-	- read graph
-	- create templates
-	- create graphs
-	- update templates
-	- update graphs
+	- login			POST /auth/login
+ 	- read template list	GET /templates
+	- read template		GET /template?id
+	- create template		POST /template
+	- update templates	UPDATE /tempate?id
+	- read graph list		GET /graphs 
+	- read graph		GET /graph?id
+	- create graph		POST /graph
+	- update graphs		UPDATE /graph?id
 - common
-	- quick access url (share key)
-	- share templates
-	- share graphs
-- create user
+	- quick access url (share key)		POST /s?id
+	- share templates				POST /s/template
+	- share graphs				POST /s/graph
+- guest
+	- create user		POST /auth/register
 
 API end points
 	- /auth
+		- /auth/register [POST]
 		- /auth/login [POST]
-		- /auth/guest
 		- /auth/refresh [GET]
-	- /g/* [GET]
-	- /graphs [GET, POST]
-	- /graphs/* [GET, POST]
-	
+	- /s
+		- /s?id 		[POST]
+		- /s/graph		[POST]
+		- /s/template	[POST]
+	- /graph [GET, POST, UPDATE]
+	- /graphs?id [GET]
+	- /template [GET, POST, UPDATE]
+	- /templates?id [GET]
 
 DB
 user
@@ -34,15 +40,24 @@ user
 	- lastAccessAt (JWT)
 	- lastPasswordChangeAt
 	- refreshToken
-	- data_id (FK 1-many)
+	- data_ids (FK 1-many)
 
-data
+ownedData
+	- id (PK)
+	- type ("graph", "template")
+	- createdAt
+	- lastAccessedAt
+	- lastUpdatedAt
+	- owner (FK)
+	- data
+
+sharedData
 	- id (PK)
 	- sharekey
 	- type ("graph", "template")
 	- password (nullable)
 	- createdAt
-	- lastUpdatedAt
+	- accessCount
 	- validuntil (null if user)
 	- owner (null if guest)
 	- data
