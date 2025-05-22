@@ -1,6 +1,7 @@
 User's POV
 - user
 	- login			POST /auth/login
+	- renew JWT		GET /auth/login
  	- read template list	GET /templates
 	- read template		GET /template?id
 	- create template		POST /template
@@ -10,19 +11,20 @@ User's POV
 	- create graph		POST /graph
 	- update graphs		UPDATE /graph?id
 - common
-	- quick access url (share key)		POST /s?id
+	- quick access url (share key)		GET, POST /s?id
 	- share templates				POST /s/template
 	- share graphs				POST /s/graph
 - guest
 	- create user		POST /auth/register
 
+
 API end points
 	- /auth
 		- /auth/register [POST]
-		- /auth/login [POST]
-		- /auth/refresh [GET]
+		- /auth/login [GET, POST]
+		- /auth/renew [GET]
 	- /s
-		- /s?id 		[POST]
+		- /s?id 		[GET, POST]
 		- /s/graph		[POST]
 		- /s/template	[POST]
 	- /graph [GET, POST, UPDATE]
@@ -30,34 +32,44 @@ API end points
 	- /template [GET, POST, UPDATE]
 	- /templates?id [GET]
 
+
 DB
 user
 	- id (PK)
 	- username
 	- password
+	- email
+	- enabled
 	- registeredAt
 	- lastLoginAt (BasicAuth)
 	- lastAccessAt (JWT)
 	- lastPasswordChangeAt
 	- refreshToken
-	- data_ids (FK 1-many)
+	- graphs (FK 1-many)
+	- templates (FK 1-m)
 
-ownedData
+userData
 	- id (PK)
 	- type ("graph", "template")
 	- createdAt
 	- lastAccessedAt
 	- lastUpdatedAt
 	- owner (FK)
-	- data
+	- template
+	- data (FK m-1)
 
 sharedData
 	- id (PK)
 	- sharekey
+	- password
 	- type ("graph", "template")
-	- password (nullable)
 	- createdAt
 	- accessCount
-	- validuntil (null if user)
-	- owner (null if guest)
+	- validUntil
+	- template
+	- data (FK m-1)
+
+DataSet
+	- id (PK)
 	- data
+	
